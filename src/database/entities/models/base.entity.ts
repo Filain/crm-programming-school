@@ -1,10 +1,10 @@
 import { CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 export class BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-  @CreateDateColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 }

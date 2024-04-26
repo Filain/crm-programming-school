@@ -24,9 +24,10 @@ export class MysqlService implements TypeOrmOptionsFactory {
         path.join(
           process.cwd(),
           'dist',
+          'src',
           'database',
           'entities',
-          '*.entity{.ts,.js}',
+          '*.entity.js',
         ),
       ],
       migrations: [

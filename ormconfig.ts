@@ -17,16 +17,11 @@ export default new DataSource({
   password: mysqlConfig.password,
   database: mysqlConfig.database,
   entities: [
-    path.join(
-      process.cwd(),
-      'src',
-      'database',
-      'entities',
-      '*.entity{.ts,.js}',
-    ),
+    path.join(process.cwd(), 'src', 'database', 'entities', '*.entity.ts'),
   ],
   migrations: [
-    path.join(process.cwd(), 'src', 'database', 'migrations', '*.js'),
+    path.join(process.cwd(), 'src', 'database', 'migrations', '*.ts'),
   ],
   synchronize: false,
 });
+

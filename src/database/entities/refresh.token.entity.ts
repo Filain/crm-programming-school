@@ -1,15 +1,16 @@
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { ManagerEntity } from './manager.entity';
 import { BaseEntity } from './models/base.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('refresh_tokens')
 export class RefreshTokenEntity extends BaseEntity {
-  @Column('text')
+  @Column({ type: 'varchar', length: 255 })
   refreshToken: string;
+
   @Column()
-  managerId: string;
-  @OneToMany(() => ManagerEntity, (manager) => manager.refreshTokens)
-  @JoinColumn({ name: 'managerId' })
-  manager?: ManagerEntity;
+  user_id: number;
+  @ManyToOne(() => UserEntity, (entity) => entity.refreshTokens)
+  @JoinColumn({ name: 'user_id' })
+  user?: UserEntity;
 }

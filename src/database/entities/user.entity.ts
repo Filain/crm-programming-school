@@ -4,20 +4,20 @@ import { ERole } from '../../common/enums/role.enum';
 import { BaseEntity } from './models/base.entity';
 import { RefreshTokenEntity } from './refresh.token.entity';
 
-@Entity('managers')
-export class ManagerEntity extends BaseEntity {
-  @Column('text')
+@Entity('user')
+export class UserEntity extends BaseEntity {
+  @Column({ type: 'varchar', length: 30 })
   name?: string;
 
-  @Column('text', { unique: true })
+  @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
 
-  @Column('text')
+  @Column({ type: 'varchar', length: 255 })
   password: string;
 
   @Column({ type: 'enum', enum: ERole })
   role: ERole;
 
-  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.manager)
+  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
   refreshTokens?: RefreshTokenEntity[];
 }
