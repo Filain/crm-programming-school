@@ -1,6 +1,7 @@
 export type Config = {
   app: AppConfig;
   mysql: MysqlConfig;
+  jwt: JWTConfig;
 };
 
 export type AppConfig = {
@@ -14,4 +15,10 @@ export type MysqlConfig = {
   username: string;
   password: string;
   database: string;
+};
+export type JWTConfig = {
+  accessTokenSecret: string;
+  accessTokenExpiration: number;
+  refreshTokenSecret: string;
+  refreshTokenExpiration: number;
 };
