@@ -3,10 +3,12 @@ import * as bcrypt from 'bcrypt';
 
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
+import { UserService } from '../../user/user.service';
 import { SignInRequestDto } from '../dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { AuthUserResponseDto } from '../dto/response/auth-user.response.dto';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
+import { TokenType } from '../enums/token-type.enum';
 import { IUserData } from '../interfaces/user-data.interface';
 import { AuthMapper } from './auth.mapper';
 import { TokenService } from './token.service';
@@ -17,9 +19,11 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
+    private readonly userService: UserService,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthUserResponseDto> {
+    await this.userService.isEmailUniqueOrThrow(dto.email);
     const password = await bcrypt.hash(dto.password, 8);
 
     const user = await this.userRepository.save(
@@ -30,9 +34,7 @@ export class AuthService {
       userId: user.id,
     });
 
-    await Promise.all([
-      this.refreshRepository.saveToken(user.id, tokens.refreshToken),
-    ]);
+    await this.refreshRepository.saveToken(user.id, tokens.refreshToken);
 
     return AuthMapper.toResponseDto(user, tokens);
   }
@@ -43,7 +45,7 @@ export class AuthService {
       select: { id: true, password: true },
     });
     if (!userEntity) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('SignIn error user not found');
     }
 
     const isPasswordsMatch = await bcrypt.compare(
@@ -62,29 +64,39 @@ export class AuthService {
     });
 
     await this.refreshRepository.delete({ user_id: user.id });
-
     await this.refreshRepository.saveToken(user.id, tokens.refreshToken);
 
     return AuthMapper.toResponseDto(user, tokens);
   }
 
-  public async logout(userData: IUserData): Promise<void> {
-    await this.refreshRepository.delete({ user_id: userData.userId });
+  //---------------------logout---------------------------
+
+  public async logout(refreshToken: string): Promise<void> {
+    await this.refreshRepository.delete({ refreshToken });
   }
 
-  public async refreshToken(userData: IUserData): Promise<TokenResponseDto> {
-    const user = await this.userRepository.findOneBy({
-      id: userData.userId,
-    });
-    // console.log('userData.userId', userData.userId);
+  //---------------------refreshToken---------------------------
 
-    await this.refreshRepository.delete({ user_id: user.id });
+  public async refreshToken(refreshToken: string): Promise<TokenResponseDto> {
+    // TO DO То всьо виправити по людське
+    if (!refreshToken) {
+      throw new UnauthorizedException('refreshToken not found');
+    }
+
+    const payload = await this.tokenService.verifyToken(
+      refreshToken,
+      TokenType.REFRESH,
+    );
+
+    await this.refreshRepository.delete({
+      user_id: payload.userId,
+    });
 
     const tokens = await this.tokenService.generateAuthTokens({
-      userId: user.id,
+      userId: payload.userId,
     });
 
-    await this.refreshRepository.saveToken(user.id, tokens.refreshToken);
+    await this.refreshRepository.saveToken(payload.userId, tokens.refreshToken);
     return tokens;
   }
 }

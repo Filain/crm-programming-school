@@ -4,9 +4,12 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 
 import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
@@ -36,15 +39,28 @@ export class AuthController {
   @Post('sign-in')
   public async signIn(
     @Body() dto: SignInRequestDto,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<AuthUserResponseDto> {
-    return await this.authService.signIn(dto);
+    const token = await this.authService.signIn(dto);
+    res.cookie('refreshToken', token.tokens.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+    return token;
   }
-
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout' })
   @Post('logout')
-  public async logout(@CurrentUser() userData: IUserData): Promise<void> {
-    await this.authService.logout(userData);
+  public async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
+    const token = await this.authService.logout(refreshToken);
+    res.cookie('refreshToken', '', {
+      expires: new Date(0),
+      httpOnly: true,
+    });
   }
 
   @SkipAuth()
@@ -53,8 +69,16 @@ export class AuthController {
   @ApiOperation({ summary: 'Update token pair' })
   @Post('refresh')
   public async updateRefreshToken(
-    @CurrentUser() userData: IUserData,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<TokenResponseDto> {
-    return await this.authService.refreshToken(userData);
+    const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
+    const token = await this.authService.refreshToken(refreshToken);
+    res.cookie('refreshToken', token.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    return token;
   }
 }

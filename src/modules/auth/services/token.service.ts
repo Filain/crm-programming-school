@@ -1,5 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { isLogLevelEnabled } from '@nestjs/common/services/utils';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
@@ -22,16 +21,10 @@ export class TokenService {
   public async generateAuthTokens(
     payload: JwtPayload,
   ): Promise<TokenResponseDto> {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.generateToken(payload, TokenType.ACCESS),
-      this.generateToken(payload, TokenType.REFRESH),
-    ]);
-    //console.log('accessToken', refreshToken);
-    //console.log('refreshToken', refreshToken);
-    return {
-      accessToken,
-      refreshToken,
-    };
+    const accessToken = await this.generateToken(payload, TokenType.ACCESS);
+    const refreshToken = await this.generateToken(payload, TokenType.REFRESH);
+
+    return { accessToken, refreshToken };
   }
 
   public async verifyToken(
@@ -40,9 +33,6 @@ export class TokenService {
   ): Promise<JwtPayload> {
     try {
       const secret = this.getSecret(type);
-      // console.log('secret', secret);
-      // console.log('token', token);
-      // console.log('type', type);
       return await this.jwtService.verifyAsync(token, { secret });
     } catch (e) {
       throw new UnauthorizedException('verifyToken error fuck');
