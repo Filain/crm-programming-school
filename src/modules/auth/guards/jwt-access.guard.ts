@@ -44,7 +44,7 @@ export class JwtAccessGuard implements CanActivate {
       id: payload.userId,
     });
     if (!user) {
-      throw new UnauthorizedException('access token user not found');
+      throw new UnauthorizedException(' user not found for access token');
     }
     request.user = {
       userId: user.id,

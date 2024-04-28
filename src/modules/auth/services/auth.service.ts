@@ -76,6 +76,7 @@ export class AuthService {
     const user = await this.userRepository.findOneBy({
       id: userData.userId,
     });
+    // console.log('userData.userId', userData.userId);
 
     await this.refreshRepository.delete({ user_id: user.id });
 

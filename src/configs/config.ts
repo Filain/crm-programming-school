@@ -14,11 +14,11 @@ export default (): Config => ({
     database: process.env.DATABASE_NAME || 'fil32',
   },
   jwt: {
-    accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET || 'access secret',
+    accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET || 'accesssecret',
     accessTokenExpiration:
       parseInt(process.env.AUTH_ACCESS_TOKEN_EXPIRATION) || 3600,
     refreshTokenSecret:
-      process.env.AUTH_REFRESH_TOKEN_SECRET || 'refresh secret',
+      process.env.AUTH_REFRESH_TOKEN_SECRET || 'refreshsecret',
     refreshTokenExpiration:
       parseInt(process.env.AUTH_REFRESH_TOKEN_EXPIRATION) || 86400,
   },

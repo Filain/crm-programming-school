@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -12,10 +19,9 @@ import { IUserData } from './interfaces/user-data.interface';
 import { AuthService } from './services/auth.service';
 
 @ApiTags('Auth')
-@Controller({ path: 'auth', version: '1' })
+@Controller({ path: 'auth' })
 export class AuthController {
   constructor(private authService: AuthService) {}
-
   @SkipAuth()
   @ApiOperation({ summary: 'Registration' })
   @Post('sign-up')

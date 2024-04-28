@@ -14,9 +14,10 @@ import { UserModule } from './modules/user/user.module';
       load: [configuration],
       isGlobal: true,
     }),
+    AuthModule,
     HealthModule,
     MysqlModule,
-    AuthModule,
+
     RepositoryModule,
     UserModule,
   ],
