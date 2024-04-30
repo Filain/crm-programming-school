@@ -45,7 +45,7 @@ async function bootstrap() {
     name: 'admin',
     email: 'admin@gmail.com',
     password: 'admin',
-    roles: ERole.ADMIN,
+    role: ERole.ADMIN,
   };
   const ifAdmin = await appAdminCreate.isAdmin(adminData.email);
   if (!ifAdmin) {

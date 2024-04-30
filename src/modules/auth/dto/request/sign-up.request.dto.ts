@@ -28,7 +28,7 @@ export class SignUpRequestDto {
   @IsOptional()
   @IsNotEmpty()
   @IsEnum(ERole)
-  roles?: ERole;
+  role?: ERole;
 
   @IsOptional()
   @IsString()
