@@ -8,7 +8,12 @@ export class AuthMapper {
     tokens: TokenResponseDto,
   ): AuthUserResponseDto {
     return {
-      user: userEntity,
+      user: {
+        id: userEntity.id,
+        email: userEntity.email,
+        name: userEntity.name,
+        role: userEntity.role,
+      },
       tokens,
     };
   }

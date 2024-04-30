@@ -25,10 +25,10 @@ export class SignUpRequestDto {
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%_*#?&])[A-Za-z\d@$_!%*#?&]{8,}$/)
   password: string;
 
-  @ApiProperty({ example: ERole.MANAGER })
+  @IsOptional()
   @IsNotEmpty()
   @IsEnum(ERole)
-  roles: ERole;
+  roles?: ERole;
 
   @IsOptional()
   @IsString()
