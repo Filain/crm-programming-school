@@ -1,24 +1,13 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
-import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
 import { SignInRequestDto } from './dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from './dto/request/sign-up.request.dto';
 import { AuthUserResponseDto } from './dto/response/auth-user.response.dto';
 import { TokenResponseDto } from './dto/response/token.response.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
-import { IUserData } from './interfaces/user-data.interface';
 import { AuthService } from './services/auth.service';
 
 @ApiTags('Auth')

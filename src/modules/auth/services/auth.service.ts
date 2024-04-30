@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { UserEntity } from '../../../database/entities/user.entity';
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
 import { UserService } from '../../user/user.service';
@@ -78,7 +79,6 @@ export class AuthService {
   //---------------------refreshToken---------------------------
 
   public async refreshToken(refreshToken: string): Promise<TokenResponseDto> {
-    // TO DO То всьо виправити по людське
     if (!refreshToken) {
       throw new UnauthorizedException('refreshToken not found');
     }
@@ -98,5 +98,9 @@ export class AuthService {
 
     await this.refreshRepository.saveToken(payload.userId, tokens.refreshToken);
     return tokens;
+  }
+
+  public async isAdmin(email: string): Promise<UserEntity> {
+    return await this.userRepository.findOneBy({ email });
   }
 }

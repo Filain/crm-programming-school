@@ -5,6 +5,7 @@ import configuration from 'src/configs/config';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MysqlModule } from './modules/mysql/mysql.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { RepositoryModule } from './modules/repository/repository.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -17,9 +18,9 @@ import { UserModule } from './modules/user/user.module';
     AuthModule,
     HealthModule,
     MysqlModule,
-
     RepositoryModule,
     UserModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],

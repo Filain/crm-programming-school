@@ -12,4 +12,8 @@ export class AuthBaseRequestDto {
   @IsNotEmpty()
   @IsString()
   readonly password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly roles: string;
 }
