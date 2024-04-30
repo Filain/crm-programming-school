@@ -14,7 +14,7 @@ import { AuthService } from './services/auth.service';
 @Controller({ path: 'auth' })
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @SkipAuth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Registration' })
   @Post('sign-up')
   public async signUp(
