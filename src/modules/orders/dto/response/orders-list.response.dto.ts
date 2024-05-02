@@ -3,8 +3,7 @@ import { OrderResponseDto } from './order.response.dto';
 export class OrdersListResponseDto {
   data: OrderResponseDto[];
   meta: {
-    limit: number;
+    page: number;
     total: number;
-    offset: number;
   };
 }

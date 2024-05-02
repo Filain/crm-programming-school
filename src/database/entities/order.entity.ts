@@ -2,8 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { CommentEntity } from './comment.entity';
+import { RefreshTokenEntity } from './refresh.token.entity';
 
 @Entity('orders')
 export class OrderEntity {
@@ -37,4 +41,11 @@ export class OrderEntity {
   msg?: string;
   @Column({ type: 'varchar', length: 15, nullable: true })
   status?: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  manager?: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  group?: string;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.order)
+  comments?: CommentEntity[];
 }

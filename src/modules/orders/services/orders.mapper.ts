@@ -29,8 +29,7 @@ export class OrdersMapper {
     return {
       data: entities.map(this.toResponseDto),
       meta: {
-        limit: query.limit,
-        offset: query.offset,
+        page: query.page,
         total,
       },
     };

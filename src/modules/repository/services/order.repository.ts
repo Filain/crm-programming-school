@@ -14,14 +14,16 @@ export class OrderRepository extends Repository<OrderEntity> {
     query: OrderListRequestDto,
   ): Promise<[OrderEntity[], number]> {
     const qb = this.createQueryBuilder('orders');
+    const orderOnPage = 25;
     if (query.sortBy.startsWith('-')) {
       query.sortBy.substring(1);
       qb.addOrderBy(query.sortBy, 'ASC');
     } else {
       qb.addOrderBy(query.sortBy, 'DESC');
     }
-    qb.take(query.limit);
-    qb.skip(query.offset);
-    return await qb.getManyAndCount();
+    qb.take(query.page * orderOnPage);
+    qb.skip(query.page * orderOnPage - orderOnPage);
+    const pages = (await qb.getCount()) / orderOnPage;
+    return [await qb.getMany(), pages];
   }
 }
