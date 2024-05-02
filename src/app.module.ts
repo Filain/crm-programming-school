@@ -7,7 +7,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MysqlModule } from './modules/mysql/mysql.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { RepositoryModule } from './modules/repository/repository.module';
-import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { UserModule } from './modules/user/user.module';
     HealthModule,
     MysqlModule,
     RepositoryModule,
-    UserModule,
     OrdersModule,
   ],
   controllers: [],

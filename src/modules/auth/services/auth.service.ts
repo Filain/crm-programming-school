@@ -1,10 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { UserEntity } from '../../../database/entities/user.entity';
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
-import { UserService } from '../../user/user.service';
 import { SignInRequestDto } from '../dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { AuthUserResponseDto } from '../dto/response/auth-user.response.dto';
@@ -20,11 +23,10 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
-    private readonly userService: UserService,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthUserResponseDto> {
-    await this.userService.isEmailUniqueOrThrow(dto.email);
+    await this.isEmailUniqueOrThrow(dto.email);
     const password = await bcrypt.hash(dto.password, 8);
 
     const user = await this.userRepository.save(
@@ -102,5 +104,12 @@ export class AuthService {
 
   public async isAdmin(email: string): Promise<UserEntity> {
     return await this.userRepository.findOneBy({ email });
+  }
+
+  private async isEmailUniqueOrThrow(email: string): Promise<void> {
+    const user = await this.userRepository.findOneBy({ email });
+    if (user) {
+      throw new ConflictException('Email already exists');
+    }
   }
 }
