@@ -13,7 +13,6 @@ import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { AuthUserResponseDto } from '../dto/response/auth-user.response.dto';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { TokenType } from '../enums/token-type.enum';
-import { IUserData } from '../interfaces/user-data.interface';
 import { AuthMapper } from './auth.mapper';
 import { TokenService } from './token.service';
 
