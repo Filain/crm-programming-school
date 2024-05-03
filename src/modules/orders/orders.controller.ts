@@ -1,14 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';
@@ -30,7 +22,11 @@ export class OrdersController {
   @Get()
   public async getList(
     @Query() query: OrderListRequestDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<OrdersListResponseDto> {
+    // console.log('req', req);
+    // console.log('res', res);
     {
       return await this.ordersService.getList(query);
     }

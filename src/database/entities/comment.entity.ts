@@ -8,6 +8,9 @@ export class CommentEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   comment: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  manager_write: string;
+
   @Column()
   order_id: number;
   @ManyToOne(() => OrderEntity, (entity) => entity.comments)

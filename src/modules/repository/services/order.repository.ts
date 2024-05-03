@@ -16,12 +16,12 @@ export class OrderRepository extends Repository<OrderEntity> {
     const qb = this.createQueryBuilder('orders');
     const orderOnPage = 25;
     if (query.sortBy.startsWith('-')) {
-      query.sortBy.substring(1);
-      qb.addOrderBy(query.sortBy, 'ASC');
-    } else {
+      query.sortBy = query.sortBy.substring(1);
       qb.addOrderBy(query.sortBy, 'DESC');
+    } else {
+      qb.addOrderBy(query.sortBy, 'ASC');
     }
-    qb.take(query.page * orderOnPage);
+    qb.take(orderOnPage);
     qb.skip(query.page * orderOnPage - orderOnPage);
     const pages = (await qb.getCount()) / orderOnPage;
     return [await qb.getMany(), pages];

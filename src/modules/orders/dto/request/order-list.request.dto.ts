@@ -19,7 +19,7 @@ export class OrderListRequestDto {
   @IsInt()
   @Min(0)
   @IsOptional()
-  page?: number = 0;
+  page?: number = 1;
 
   @Type(() => String)
   @IsString()
