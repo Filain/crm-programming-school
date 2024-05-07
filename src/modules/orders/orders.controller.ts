@@ -6,6 +6,7 @@ import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';
 import { OrderResponseDto } from './dto/response/order.response.dto';
+import { OrdersResponseDto } from './dto/response/orders.response.dto';
 import { OrdersListResponseDto } from './dto/response/orders-list.response.dto';
 import { OrdersService } from './services/orders.service';
 
@@ -32,9 +33,11 @@ export class OrdersController {
   @ApiOperation({ summary: 'Get one order by id' })
   //  @ApiBearerAuth()
   @SkipAuth()
-  @Get(':id')
-  public async findOne(@Param('id') id: string): Promise<OrderResponseDto> {
-    return await this.ordersService.findOne(id);
+  @Get(':order_id')
+  public async findOne(
+    @Param('order_id') order_id: string,
+  ): Promise<OrderResponseDto> {
+    return await this.ordersService.findOne(order_id);
   }
 
   // @Patch(':id')

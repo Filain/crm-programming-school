@@ -1,7 +1,7 @@
-import { OrderResponseDto } from './order.response.dto';
+import { OrdersResponseDto } from './orders.response.dto';
 
 export class OrdersListResponseDto {
-  data: OrderResponseDto[];
+  data: OrdersResponseDto[];
   meta: {
     page: number;
     total: number;

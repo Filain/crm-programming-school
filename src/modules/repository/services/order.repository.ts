@@ -36,4 +36,11 @@ export class OrderRepository extends Repository<OrderEntity> {
     const pages = (await qb.getCount()) / orderOnPage;
     return [await qb.getMany(), pages];
   }
+
+  public async findOrderBy(id: number): Promise<OrderEntity> {
+    const qb = this.createQueryBuilder('orders');
+    qb.andWhere('orders.id = :id', { id });
+    qb.leftJoinAndSelect('orders.comments', 'comments');
+    return await qb.getOne();
+  }
 }

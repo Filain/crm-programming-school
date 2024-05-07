@@ -1,19 +1,7 @@
-import { PickType } from '@nestjs/swagger';
+import { CommentRespounseDto } from '../../../comments/dto/response/comment.respounse.dto';
 
-import { BaseOrderResponseDto } from './baseOrder.response.dto';
-
-export class OrderResponseDto extends PickType(BaseOrderResponseDto, [
-  'id',
-  'name',
-  'surname',
-  'email',
-  'phone',
-  'age',
-  'course',
-  'course_format',
-  'course_type',
-  'sum',
-  'alreadyPaid',
-  'created_at',
-  'status',
-]) {}
+export class OrderResponseDto {
+  massage: string;
+  utm: string;
+  comments?: CommentRespounseDto[];
+}

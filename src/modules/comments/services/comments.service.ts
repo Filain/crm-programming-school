@@ -22,20 +22,6 @@ export class CommentsService {
     createCommentDto: CreateCommentRequestDto,
     userData: IUserData,
   ): Promise<CommentRespounseDto> {
-    const userEntity = await this.userRepository.findOneBy({
-      id: userData.userId,
-    });
-    if (!userEntity) {
-      throw new UnprocessableEntityException('User not found');
-    }
-
-    const commentEntity = await this.commentsRepository.save(
-      this.commentsRepository.create({
-        ...createCommentDto,
-        manager_write: userEntity.name,
-      }),
-    );
-
     const orderEntity = await this.ordersRepository.findOneBy({
       id: createCommentDto.order_id,
     });
@@ -43,10 +29,30 @@ export class CommentsService {
     if (!orderEntity) {
       throw new UnprocessableEntityException('Order not found');
     }
+    if (orderEntity.status === EStatus.IN_WORK || orderEntity.status === null) {
+      throw new UnprocessableEntityException(
+        'Order is not your or is already in work',
+      );
+    }
+
+    const userEntity = await this.userRepository.findOneBy({
+      id: userData.userId,
+    });
+    if (!userEntity) {
+      throw new UnprocessableEntityException('User not found');
+    }
+    const commentEntity = await this.commentsRepository.save(
+      this.commentsRepository.create({
+        ...createCommentDto,
+        manager_write: userEntity.name,
+      }),
+    );
+
     await this.ordersRepository.save(
       this.ordersRepository.create({
         ...orderEntity,
         status: EStatus.IN_WORK,
+        manager: userEntity.name,
       }),
     );
     return CommentsMapper.toResponseDto(commentEntity);
@@ -87,6 +93,12 @@ export class CommentsService {
     if (!orderEntity) {
       throw new UnprocessableEntityException('Order not found');
     }
+    if (orderEntity.status === EStatus.IN_WORK || orderEntity.status === null) {
+      throw new UnprocessableEntityException(
+        'Order is not your or is already in work',
+      );
+    }
+
     if (orderEntity.status !== EStatus.IN_WORK) {
       await this.ordersRepository.save(
         this.ordersRepository.create({
