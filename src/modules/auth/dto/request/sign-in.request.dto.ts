@@ -1,8 +1,16 @@
-import { PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
-import { AuthBaseRequestDto } from './auth-base.request.dto';
+export class SignInRequestDto {
+  @ApiProperty({ example: 'test@gmail.com' })
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/)
+  email: string;
 
-export class SignInRequestDto extends PickType(AuthBaseRequestDto, [
-  'email',
-  'password',
-]) {}
+  @ApiProperty({ example: '123qwe!@#QWE' })
+  @IsNotEmpty()
+  @IsString()
+  @Length(0, 255)
+  password: string;
+}

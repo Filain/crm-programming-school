@@ -29,6 +29,7 @@ export class AuthController {
   @Post('sign-in')
   public async signIn(
     @Body() dto: SignInRequestDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthUserResponseDto> {
     const token = await this.authService.signIn(dto);

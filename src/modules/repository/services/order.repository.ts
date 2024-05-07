@@ -15,12 +15,22 @@ export class OrderRepository extends Repository<OrderEntity> {
   ): Promise<[OrderEntity[], number]> {
     const qb = this.createQueryBuilder('orders');
     const orderOnPage = 25;
+    // // Додати умову для фільтрації за певними полями, якщо вони вказані в запиті
+    // if (query.customerId) {
+    //   qb.andWhere('orders.customerId = :customerId', { customerId: query.customerId });
+    // }
+    // if (query.status) {
+    //   qb.andWhere('orders.status = :status', { status: query.status });
+    // }
+
+    // Сортування
     if (query.sortBy.startsWith('-')) {
       query.sortBy = query.sortBy.substring(1);
       qb.addOrderBy(query.sortBy, 'DESC');
     } else {
       qb.addOrderBy(query.sortBy, 'ASC');
     }
+
     qb.take(orderOnPage);
     qb.skip(query.page * orderOnPage - orderOnPage);
     const pages = (await qb.getCount()) / orderOnPage;

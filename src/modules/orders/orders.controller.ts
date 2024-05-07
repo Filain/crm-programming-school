@@ -1,9 +1,11 @@
-import { Controller, Get, Query, Req, Res } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
+import { IUserData } from '../auth/interfaces/user-data.interface';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';
+import { OrderResponseDto } from './dto/response/order.response.dto';
 import { OrdersListResponseDto } from './dto/response/orders-list.response.dto';
 import { OrdersService } from './services/orders.service';
 
@@ -18,32 +20,30 @@ export class OrdersController {
   // }
 
   @ApiOperation({ summary: 'Get all orders' })
-  @SkipAuth()
+  @ApiBearerAuth()
   @Get()
   public async getList(
     @Query() query: OrderListRequestDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
+    @CurrentUser() userData: IUserData,
   ): Promise<OrdersListResponseDto> {
-    // console.log('req', req);
-    // console.log('res', res);
-    {
-      return await this.ordersService.getList(query);
-    }
-
-    // @Get(':id')
-    // findOne(@Param('id') id: string) {
-    //   return this.ordersService.findOne(+id);
-    // }
-    //
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    //   return this.ordersService.update(+id, updateOrderDto);
-    // }
-    //
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //   return this.ordersService.remove(+id);
-    // }
+    return await this.ordersService.getList(query);
   }
+
+  @ApiOperation({ summary: 'Get one order by id' })
+  //  @ApiBearerAuth()
+  @SkipAuth()
+  @Get(':id')
+  public async findOne(@Param('id') id: string): Promise<OrderResponseDto> {
+    return await this.ordersService.findOne(id);
+  }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  //   return this.ordersService.update(+id, updateOrderDto);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.ordersService.remove(+id);
+  // }
 }
