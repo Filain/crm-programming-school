@@ -1,7 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { IsInt, IsString } from 'class-validator';
 
-import { CreateCommentRequestDto } from './create-comment.request.dto';
+export class UpdateCommentRequestDto {
+  @IsString()
+  comment: string;
 
-export class UpdateCommentRequestDto extends PartialType(
-  CreateCommentRequestDto,
-) {}
+  @IsInt()
+  order_id: number;
+}

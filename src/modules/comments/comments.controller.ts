@@ -15,6 +15,7 @@ import { IUserData } from '../auth/interfaces/user-data.interface';
 import { CreateCommentRequestDto } from './dto/request/create-comment.request.dto';
 import { UpdateCommentRequestDto } from './dto/request/update-comment.request.dto';
 import { CommentRespounseDto } from './dto/response/comment.respounse.dto';
+import { CommentListRespounseDto } from './dto/response/comment-list.respounse.dto';
 import { CommentsService } from './services/comments.service';
 
 @ApiTags('Comments')
@@ -32,34 +33,37 @@ export class CommentsController {
     return await this.commentsService.create(createCommentDto, userData);
   }
 
-  @SkipAuth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all comments' })
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  @Get(':order_id')
+  public async findAllComments(
+    @Param('order_id') order_id: string,
+  ): Promise<CommentListRespounseDto> {
+    return await this.commentsService.findAllComments(order_id);
   }
 
-  // @SkipAuth()
-  // @ApiOperation({ summary: 'Get all users' })
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.commentsService.findOne(+id);
-  // }
-
-  @SkipAuth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Take all comments by user' })
-  @Put(':id')
-  update(
-    @Param('id') id: string,
+  @Put(':comment_id')
+  public async updateComment(
+    @Param('comment_id') comment_id: string,
     @Body() updateCommentDto: UpdateCommentRequestDto,
+    @CurrentUser() userData: IUserData,
   ) {
-    return this.commentsService.update(+id, updateCommentDto);
+    return await this.commentsService.updateComment(
+      +comment_id,
+      updateCommentDto,
+      userData,
+    );
   }
 
-  @SkipAuth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete comment' })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  @Delete(':comment_id')
+  public async remove(@Param('comment_id') comment_id: string) {
+    await this.commentsService.remove(+comment_id);
+    return {
+      message: 'Comment deleted',
+    };
   }
 }
