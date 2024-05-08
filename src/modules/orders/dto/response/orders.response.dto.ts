@@ -16,4 +16,5 @@ export class OrdersResponseDto extends PickType(BaseOrderResponseDto, [
   'alreadyPaid',
   'created_at',
   'status',
+  'group',
 ]) {}

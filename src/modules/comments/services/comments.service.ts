@@ -93,6 +93,14 @@ export class CommentsService {
     if (!orderEntity) {
       throw new UnprocessableEntityException('Order not found');
     }
+
+    if (
+      orderEntity.manager != null &&
+      userEntity.name !== orderEntity.manager
+    ) {
+      throw new UnprocessableEntityException('You are not manager');
+    }
+
     if (orderEntity.status === EStatus.IN_WORK || orderEntity.status === null) {
       throw new UnprocessableEntityException(
         'Order is not your or is already in work',

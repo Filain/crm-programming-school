@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';
+import { OrderUpdateRequestDto } from './dto/request/order-update.request.dto';
 import { OrderResponseDto } from './dto/response/order.response.dto';
 import { OrdersResponseDto } from './dto/response/orders.response.dto';
 import { OrdersListResponseDto } from './dto/response/orders-list.response.dto';
@@ -40,10 +41,17 @@ export class OrdersController {
     return await this.ordersService.findOne(order_id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-  //   return this.ordersService.update(+id, updateOrderDto);
-  // }
+  @ApiOperation({ summary: 'Edit order by id' })
+  @ApiBearerAuth()
+  @Put(':order_id')
+  public async update(
+    @Param('order_id') order_id: string,
+    @Body() updateOrderDto: OrderUpdateRequestDto,
+    @CurrentUser() userData: IUserData,
+  ): Promise<OrdersResponseDto> {
+    return await this.ordersService.update(+order_id, updateOrderDto, userData);
+  }
+
   //
   // @Delete(':id')
   // remove(@Param('id') id: string) {

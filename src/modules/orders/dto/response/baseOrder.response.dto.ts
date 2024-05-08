@@ -14,4 +14,5 @@ export class BaseOrderResponseDto {
   utm: string;
   msg: string;
   status: string;
+  group: string;
 }

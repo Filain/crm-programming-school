@@ -21,6 +21,7 @@ export class OrdersMapper {
       sum: orderEntity.sum,
       alreadyPaid: orderEntity.alreadyPaid,
       created_at: orderEntity.created_at,
+      group: orderEntity.group,
     };
   }
   public static toListResponseDto(
