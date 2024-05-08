@@ -5,7 +5,7 @@ import { TransformHelper } from '../../../../common/helpers/transform.helper';
 
 export class CreateGroupRequestDto {
   @IsArray()
-  @IsString()
+  @IsString({ each: true })
   @Transform(TransformHelper.trimArray)
   @Transform(TransformHelper.uniqueItems)
   group: string[];
