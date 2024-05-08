@@ -1,9 +1,15 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
+import { OrderFilterRequestDto } from './dto/request/order-filter.request.dto';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';
 import { OrderUpdateRequestDto } from './dto/request/order-update.request.dto';
 import { OrderResponseDto } from './dto/response/order.response.dto';
@@ -31,9 +37,28 @@ export class OrdersController {
     return await this.ordersService.getList(query);
   }
 
+  @ApiOperation({ summary: 'Get filtered orders' })
+  @ApiBearerAuth()
+  @Get('filtered')
+  public async findAllFiltered(
+    @Query() query: OrderFilterRequestDto,
+  ): Promise<OrdersListResponseDto> {
+    return await this.ordersService.findAllFiltered(query);
+  }
+
+  @ApiOperation({ summary: 'Get my filtered orders' })
+  @ApiBearerAuth()
+  @Get('my-filtered')
+  public async findMylFiltered(
+    @Query() query: OrderFilterRequestDto,
+    @CurrentUser() userData: IUserData,
+  ): Promise<OrdersListResponseDto> {
+    return await this.ordersService.findMylFiltered(query, userData);
+  }
+
   @ApiOperation({ summary: 'Get one order by id' })
-  //  @ApiBearerAuth()
-  @SkipAuth()
+  @ApiBearerAuth()
+  // @SkipAuth()
   @Get(':order_id')
   public async findOne(
     @Param('order_id') order_id: string,

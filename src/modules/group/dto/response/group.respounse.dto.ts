@@ -1,3 +1,3 @@
 export class GroupRespounseDto {
-  group: string[];
+  group: string;
 }

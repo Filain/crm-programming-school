@@ -3,6 +3,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { OrderRepository } from '../../repository/services/order.repository';
 import { UserRepository } from '../../repository/services/user.repository';
+import { OrderFilterRequestDto } from '../dto/request/order-filter.request.dto';
 import { OrderListRequestDto } from '../dto/request/order-list.request.dto';
 import { OrderUpdateRequestDto } from '../dto/request/order-update.request.dto';
 import { OrderResponseDto } from '../dto/response/order.response.dto';
@@ -46,7 +47,6 @@ export class OrdersService {
     if (!userEntity) {
       throw new UnprocessableEntityException('User not found');
     }
-
     if (
       orderEntity.manager != null &&
       userEntity.name !== orderEntity.manager
@@ -64,8 +64,24 @@ export class OrdersService {
     );
     return OrdersMapper.toResponseDto(order);
   }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} order`;
-  // }
+  public async findAllFiltered(
+    query: OrderFilterRequestDto,
+  ): Promise<OrdersListResponseDto> {
+    const [entities, total] =
+      await this.ordersRepository.getFilteredList(query);
+    return OrdersMapper.toListResponseDto(entities, total, query);
+  }
+  public async findMylFiltered(
+    query: OrderFilterRequestDto,
+    userData: IUserData,
+  ): Promise<OrdersListResponseDto> {
+    const userEntity = await this.userRepository.findOneBy({
+      id: userData.userId,
+    });
+    const [entities, total] = await this.ordersRepository.getMyFilteredList(
+      query,
+      userEntity.name,
+    );
+    return OrdersMapper.toListResponseDto(entities, total, query);
+  }
 }
