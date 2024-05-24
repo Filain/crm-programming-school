@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cors from 'cors';
 
 import { AppModule } from './app.module';
 import { ERole } from './common/enums/role.enum';
@@ -11,6 +12,12 @@ import { AuthService } from './modules/auth/services/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(
+    cors({
+      credentials: true,
+      origin: true,
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('School request API')
     .setDescription('by Volodymyr Fylypiv')
@@ -60,4 +67,4 @@ async function bootstrap() {
     Logger.log(`Swagger running http://localhost:${appConfig.port}/docs`);
   });
 }
-bootstrap();
+void bootstrap();

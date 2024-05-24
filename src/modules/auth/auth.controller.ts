@@ -1,7 +1,19 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
+import { Config, JWTConfig } from '../../configs/config.type';
 import { SkipAuth } from './decorators/skip-auth.decorator';
 import { SignInRequestDto } from './dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from './dto/request/sign-up.request.dto';
@@ -9,11 +21,19 @@ import { AuthUserResponseDto } from './dto/response/auth-user.response.dto';
 import { TokenResponseDto } from './dto/response/token.response.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './services/auth.service';
+import { TokenService } from './services/token.service';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth' })
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  private jwtConfig: JWTConfig;
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService<Config>,
+  ) {
+    this.jwtConfig = this.configService.get<JWTConfig>('jwt');
+  }
+
   // @ApiBearerAuth()
   @SkipAuth()
   @ApiOperation({ summary: 'Registration' })
@@ -34,11 +54,14 @@ export class AuthController {
   ): Promise<AuthUserResponseDto> {
     const token = await this.authService.signIn(dto);
     res.cookie('refreshToken', token.tokens.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      //TODO зробити з кофігів щоб брало час життя токена
+      // maxAge: this.jwtConfig.refreshTokenExpiration,
+      maxAge: 24 * 60 * 60 * 1000, // Час життя cookie
       httpOnly: true,
     });
     return token;
   }
+
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout' })
   @Post('logout')
@@ -63,13 +86,29 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<TokenResponseDto> {
-    const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
-    const token = await this.authService.refreshToken(refreshToken);
-    res.cookie('refreshToken', token.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
-
-    return token;
+    try {
+      // Отримання refresh token з cookie
+      const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
+      // Виклик методу сервісу для оновлення токену
+      const token = await this.authService.refreshToken(refreshToken);
+      // Запис нового refresh token в кукі (якщо потрібно)
+      res.cookie('refreshToken', token.refreshToken, {
+        httpOnly: true, // Обмежує доступ до кукі тільки через HTTP(S)
+        //TODO зробити з кофігів щоб брало час життя токена
+        // maxAge: this.jwtConfig.refreshTokenExpiration,
+        maxAge: 24 * 60 * 60 * 1000, // Час життя cookie
+        // secure: true, // Встановлює кукі тільки через HTTPS
+        // sameSite: 'strict', // Захищає від CSRF атак
+      });
+      return token;
+    } catch (error) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+    }
+    // const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
+    // const token = await this.authService.refreshToken(refreshToken);
+    // res.cookie('refreshToken', token.refreshToken, {
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    //   httpOnly: true,
+    // });
   }
 }

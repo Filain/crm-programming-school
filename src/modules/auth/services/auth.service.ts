@@ -83,12 +83,10 @@ export class AuthService {
     if (!refreshToken) {
       throw new UnauthorizedException('refreshToken not found');
     }
-
     const payload = await this.tokenService.verifyToken(
       refreshToken,
       TokenType.REFRESH,
     );
-
     await this.refreshRepository.delete({
       user_id: payload.userId,
     });

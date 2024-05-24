@@ -1,13 +1,7 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import { OrderFilterRequestDto } from './dto/request/order-filter.request.dto';
 import { OrderListRequestDto } from './dto/request/order-list.request.dto';

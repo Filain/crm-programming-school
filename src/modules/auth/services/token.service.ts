@@ -35,6 +35,7 @@ export class TokenService {
       const secret = this.getSecret(type);
       return await this.jwtService.verifyAsync(token, { secret });
     } catch (e) {
+      // Logger.error(e);
       throw new UnauthorizedException('verifyToken error fuck');
     }
   }
