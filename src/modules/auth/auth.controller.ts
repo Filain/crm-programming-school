@@ -54,8 +54,6 @@ export class AuthController {
   ): Promise<AuthUserResponseDto> {
     const token = await this.authService.signIn(dto);
     res.cookie('refreshToken', token.tokens.refreshToken, {
-      //TODO зробити з кофігів щоб брало час життя токена
-      // maxAge: this.jwtConfig.refreshTokenExpiration,
       maxAge: 24 * 60 * 60 * 1000, // Час життя cookie
       httpOnly: true,
     });
@@ -94,8 +92,6 @@ export class AuthController {
       // Запис нового refresh token в кукі (якщо потрібно)
       res.cookie('refreshToken', token.refreshToken, {
         httpOnly: true, // Обмежує доступ до кукі тільки через HTTP(S)
-        //TODO зробити з кофігів щоб брало час життя токена
-        // maxAge: this.jwtConfig.refreshTokenExpiration,
         maxAge: 24 * 60 * 60 * 1000, // Час життя cookie
         // secure: true, // Встановлює кукі тільки через HTTPS
         // sameSite: 'strict', // Захищає від CSRF атак
@@ -104,11 +100,5 @@ export class AuthController {
     } catch (error) {
       throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
     }
-    // const refreshToken = req.get('cookie')?.split('refreshToken=')[1];
-    // const token = await this.authService.refreshToken(refreshToken);
-    // res.cookie('refreshToken', token.refreshToken, {
-    //   maxAge: 30 * 24 * 60 * 60 * 1000,
-    //   httpOnly: true,
-    // });
   }
 }

@@ -15,4 +15,5 @@ export class BaseOrderResponseDto {
   msg: string;
   status: string;
   group: string;
+  manager: string;
 }

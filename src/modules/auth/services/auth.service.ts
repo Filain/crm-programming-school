@@ -87,6 +87,7 @@ export class AuthService {
       refreshToken,
       TokenType.REFRESH,
     );
+
     await this.refreshRepository.delete({
       user_id: payload.userId,
     });

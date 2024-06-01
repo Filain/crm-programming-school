@@ -35,7 +35,8 @@ export class OrderRepository extends Repository<OrderEntity> {
 
     qb.take(orderOnPage);
     qb.skip(query.page * orderOnPage - orderOnPage);
-    const pages = (await qb.getCount()) / orderOnPage;
+    const totalCount = await qb.getCount();
+    const pages = Math.ceil(totalCount / orderOnPage);
     return [await qb.getMany(), pages];
   }
 

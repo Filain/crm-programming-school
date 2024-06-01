@@ -22,6 +22,7 @@ export class OrdersMapper {
       alreadyPaid: orderEntity.alreadyPaid,
       created_at: orderEntity.created_at,
       group: orderEntity.group,
+      manager: orderEntity.manager,
     };
   }
   public static toListResponseDto(
